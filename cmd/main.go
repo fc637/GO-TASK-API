@@ -4,8 +4,8 @@ import (
 	// "fmt"
 	"log"
 	"time"
-	"github.com/fc637/go-task-api/internal/handler"
-	"github.com/fc637/go-task-api/internal/store"
+	"github.com/fc637/go-task-api/internal/handlers"
+	// "github.com/fc637/go-task-api/internal/taskstore"
 	"strconv"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -21,27 +21,27 @@ var (
 )
 // var 
 func main() {
-	log.Print("Entering Main")
-	server := CreateApplicationDataProducer()
-	go ServerRun(server, 0)
+	log.Print("Entering Main \n ")
+	server := CreateTaskProducer()
+	ServerRun(server, 0)
 }
 
 
-func CreateApplicationDataProducer() *fiber.App {
-	log.Print("Entering Task Producer")
-	defer log.Print("Exiting Task aProducer")
+func CreateTaskProducer() *fiber.App {
+	log.Print("Entering Task Producer \n ")
+	defer log.Print("Exiting Task Producer \n")
 	var fiberConf fiber.Config
 	fiberConf.Concurrency = 10000
 	fiberConf.EnablePrintRoutes = true
 	router := fiber.New(fiberConf)
 	router.Use(logger.New())
-	handler.AddServices(router)
+	handlers.AddServices(router)
 	return router
 }
 
 func ServerRun(arg interface{}, wid int) {
-	log.Print("Entering ServerRun")
-	defer log.Print("Exiting ServerRun")
+	log.Print("Entering ServerRun \n")
+	defer log.Print("Exiting ServerRun\n ")
 
 	router := arg.(*fiber.App)
 
@@ -69,13 +69,13 @@ func ServerRun(arg interface{}, wid int) {
 			exitError = false
 			break
 		} else {
-			log.Fatalf("Server listen Error EM: HTTP port not set")
+			log.Fatalf("Server listen Error EM: HTTP port not set \n")
 			exitError = true
 			break
 		}
 	}
 
 	if exitError {
-		log.Fatalf("Error listening")
+		log.Fatalf("Error listening \n")
 	}
 }

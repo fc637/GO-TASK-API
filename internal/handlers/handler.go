@@ -1,10 +1,10 @@
-package handler
+package handlers
 
 
 import (
+	"log"
 	"github.com/fc637/go-task-api/internal/models"
-	"github.com/fc637/go-task-api/internal/store"
-	"fmt"
+	"github.com/fc637/go-task-api/internal/taskstore"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -18,14 +18,14 @@ func NewTaskHandler(store *store.TaskStore) *TaskHandler {
 }
 
 
-func (h *TaskHandler) CreateTask(c *fiber.Ctx) error {
-	fmt.Printf("Entering Into Create Task Handler")
-	defer fmt.Printf("Exiting Create Task Handler")
+func (h *TaskHandler) CreateTaskHandler(c *fiber.Ctx) error {
+	log.Print("Entering Into Create Task Handler \n")
+	defer log.Print("\nExiting Create Task Handler\n")
 
 	// req := new(models.CreateTaskRequest)
 	var req models.CreateTaskRequest
 
-	if err := c.BodyParser(req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body :" +err.Error()})
 	}
 
@@ -49,6 +49,9 @@ func (h *TaskHandler) CreateTask(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusBadRequest).
 				JSON(fiber.Map{"error": "invalid status"})
 		}
+	}else{
+		req.Status= string(models.Todo)
+		status=models.TaskStatus(req.Status)
 	}
 
 	task := models.Task{
@@ -62,9 +65,9 @@ func (h *TaskHandler) CreateTask(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(task)
 }
 
-func (h *TaskHandler) ListTasks(c *fiber.Ctx) error {
-	fmt.Printf("Entering Into Get Handler List")
-	defer fmt.Printf("Exiting Get Handler List")
+func (h *TaskHandler) GetTaskListHandler(c *fiber.Ctx) error {
+	log.Print("Entering Into Get Handler List\n")
+	log.Print("Exiting Get Handler List\n")
 	tasks := h.store.List()
 
 	return c.JSON(tasks)
